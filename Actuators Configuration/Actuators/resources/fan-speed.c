@@ -32,7 +32,7 @@ RESOURCE(fan,
          res_put_handler,
          NULL);
 
-//static int fan_speed=0;
+
 
 static void
 res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)
@@ -63,10 +63,10 @@ bool check = false;
 
  
 	 if(coap_get_post_variable(request, "power", &power_char)) {
-		printf("SONO ENTRATO\n");
+		
 		// se c'è un valore
 	  	sscanf(power_char, "%d\n", &power);
-	printf("SONO ENTRATO\n"); 
+	
 		if (power==1){
 			printf("Richiesta di alzare la potenza\n");
 			if(++actuator_power > MAX_FAN_POWER){
