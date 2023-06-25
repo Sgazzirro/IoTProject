@@ -99,7 +99,8 @@ PROCESS(mqtt_client_process, "MQTT Client");
 
 
 // Define necessarie alla simulazione
-#define max_oxygen_threshold 20
+#define min_oxygen_threshold 7
+#define max_oxygen_threshold 15
 // Il settore di questo sensore
 #define sector 1
 // Ai fini di simulazione, c'è bisogno che il comando dell'attuatore sia "visto" dal sensore
@@ -132,14 +133,14 @@ set_ip(){
 static void
 sense_oxygen(){
     sprintf(pub_topic, "%s", "oxygen");
-    decimal_part = rand() % 25;
+    decimal_part = rand() % 20;
     floating_part = rand() % 99;
 
     time = clock_seconds();
     id = linkaddr_node_addr.u8[0];
     //set_ip();
-    printf("Current value of dust: %d.%d", decimal_part, floating_part);
-    if(decimal_part > max_oxygen_threshold){
+    printf("Current value of oxygen: %d.%d", decimal_part, floating_part);
+    if(decimal_part > max_oxygen_threshold || decimal_part < min_oxygen_threshold){
     	printf("  (Above the threshold!)");
     	// Si accende led rosso (e si spegne il verde?)
     	leds_on(LEDS_RED);
@@ -154,7 +155,7 @@ sense_oxygen(){
 
     printf(" at second %lu\n", time);
 
-	sprintf(app_buffer, "{\"id\" : %d ,  \"sector\" : %d, \"value\" : \"%d.%d\" , \"topic\" : oxygen , \"time\" : \"%lu\"}", id, sector, decimal_part, floating_part, time);
+	sprintf(app_buffer, "{\"IDSensor\" : %d ,  \"sector\" : %d, \"value\" : \"%d.%d\" , \"topic\" : oxygen , \"timestamp\" : \"%lu\"}", id, sector, decimal_part, floating_part, time);
 }
 
 static void
