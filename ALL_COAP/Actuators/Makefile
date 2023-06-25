@@ -1,4 +1,4 @@
-CONTIKI_PROJECT = coap_server
+CONTIKI_PROJECT = actuator
 all: $(CONTIKI_PROJECT)
 
 # Do not try to build on Sky because of code size limitation

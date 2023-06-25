@@ -18,7 +18,7 @@
 #define LOG_LEVEL LOG_LEVEL_INFO
 
 #define SECTOR 1
-#define TYPE "fan"
+#define TYPE "nitro"
 
 /* FIXME: This server address is hard-coded for Cooja and link-local for unconnected border router. */
 #define SERVER_EP "coap://[fd00::1]"
@@ -34,22 +34,19 @@ PROCESS(fan_server, "Fan Server");
 PROCESS(actuator_registration, "Actuator Registration");
 void client_chunk_handler(coap_message_t *response)
 			{
-			  const uint8_t *chunk;
+			const uint8_t *chunk;
+	if(response == NULL) {
+		LOG_INFO("Request timed out\n");
+		
+		return;
+	}
 
-			  if(response == NULL) {
-			    puts("Request timed out");
-			    return;
-			  }
+	int len = coap_get_payload(response, &chunk);
 
-			 coap_get_payload(response, &chunk);
-				
-			 if(strcmp((char *)chunk,"OK")==0){
-			  	printf("RISPOSTA| %s \n",(char *)chunk);
-				registered=true;
-				}else{
-				printf("there was a error!\n");
-				registered=false;
-			}
+	if(strncmp((char*)chunk, "OK", len) == 0){
+		registered = true;
+		printf("REGISTRATO\n");
+	}
 
 
 			}
@@ -88,9 +85,9 @@ while(!registered){
 				      char reg_info[100];
 					
 					if(strcmp(TYPE, "fan") == 0 ){
-						sprintf(reg_info, "{ \"Sector\": %d , \"Type\": %s, \"Power\": 0, \"Temperature\": 20 }", SECTOR, TYPE);
+						sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": 0, 20}", SECTOR, TYPE);
 					}else{
-						sprintf(reg_info, "{ \"Sector\": %d , \"Type\": %s, \"Status\": off }", SECTOR, TYPE);
+						sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": off }", SECTOR, TYPE);
 					}
 
 					printf("%s\n", reg_info);
