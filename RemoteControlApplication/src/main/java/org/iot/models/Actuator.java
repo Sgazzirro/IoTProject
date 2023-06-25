@@ -66,9 +66,5 @@ public class Actuator {
                 '}';
     }
 
-    public void disable() {
-    }
 
-    public void enable() {
-    }
 }

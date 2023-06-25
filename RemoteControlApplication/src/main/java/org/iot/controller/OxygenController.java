@@ -60,7 +60,7 @@ public class OxygenController extends Thread{
     }
 
     private void increaseOxygen(int sector) {
-        ArrayList<Actuator> actuators = new DAO().readActuatorS("nitro", sector);
+        ArrayList<Actuator> actuators = new DAO().readActuatorST("nitro", sector);
         boolean nitroOn = false;
         for(int i = 0; i < actuators.size(); i++){
             // Logica di aumento ossigeno
@@ -72,7 +72,7 @@ public class OxygenController extends Thread{
         if(nitroOn)
             return;
 
-        ArrayList<Actuator> actuators_fan = new DAO().readActuatorS("fan", sector);
+        ArrayList<Actuator> actuators_fan = new DAO().readActuatorST("fan", sector);
         for(int i = 0; i < actuators_fan.size(); i++){
             // Logica di aumento ossigeno
                 ClientCOAP.incrDecrParam(actuators_fan.get(i), "power", 1);
@@ -81,7 +81,7 @@ public class OxygenController extends Thread{
 
 
     private void reduceOxygen(int sector) {
-        ArrayList<Actuator> actuators = new DAO().readActuatorS("fan", sector);
+        ArrayList<Actuator> actuators = new DAO().readActuatorST("fan", sector);
         boolean fanOn = false;
         for(int i = 0; i < actuators.size(); i++){
             // Logica di aumento ossigeno
@@ -93,11 +93,22 @@ public class OxygenController extends Thread{
         if(fanOn)
             return;
 
-        ArrayList<Actuator> actuators_nitro = new DAO().readActuatorS("nitro", sector);
+        ArrayList<Actuator> actuators_nitro = new DAO().readActuatorST("nitro", sector);
         for(int i = 0; i < actuators_nitro.size(); i++){
             // Logica di aumento ossigeno
             ClientCOAP.enable(actuators_nitro.get(i));
         }
+
+    }
+
+    public void changeThreshold(double value, int type) {
+        if (type==-1){
+            OXYGEN_MIN_THRESHOLD = value;
+
+        }else if(type==1) {
+            OXYGEN_MAX_THRESHOLD = value;
+        }
+        return;
 
     }
 

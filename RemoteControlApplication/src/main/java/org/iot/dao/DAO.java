@@ -55,7 +55,7 @@ public class DAO {
     }
 
     // Reads all actuator with the specified type
-    public ArrayList<Actuator> readActuator(String type){
+    public ArrayList<Actuator> readActuatorT(String type){
         String sqlStatement = "SELECT * FROM Actuators WHERE Type = ?";
         ArrayList<Actuator> result = new ArrayList<>();
         try(Connection conn = DriverManager.getConnection(CONNECTION_URI, USERNAME, PASSWORD);
@@ -76,8 +76,49 @@ public class DAO {
         return result;
     }
 
+    public ArrayList<Actuator> readAllActuator(){
+        String sqlStatement = "SELECT * FROM Actuators ";
+        ArrayList<Actuator> result = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(CONNECTION_URI, USERNAME, PASSWORD);
+            PreparedStatement ps = conn.prepareStatement(sqlStatement);
+        )
+        {
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Actuator toAdd = new Actuator(rs.getString(1), rs.getString(2), rs.getInt(3),
+                        rs.getString(4), rs.getString(5));
+                result.add(toAdd);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    public ArrayList<Actuator> readActuatorS(int sector){
+        String sqlStatement = "SELECT * FROM Actuators WHERE Sector = ?";
+        ArrayList<Actuator> result = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(CONNECTION_URI, USERNAME, PASSWORD);
+            PreparedStatement ps = conn.prepareStatement(sqlStatement);
+        )
+        {
+            ps.setInt(1, sector);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                Actuator toAdd = new Actuator(rs.getString(1), rs.getString(2), rs.getInt(3),
+                        rs.getString(4), rs.getString(5));
+                result.add(toAdd);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
     // Reads all actuator with the specified type and sector
-    public ArrayList<Actuator> readActuatorS(String type, int sector){
+    public ArrayList<Actuator> readActuatorST(String type, int sector){
         String sqlStatement = "SELECT * FROM Actuators WHERE Type = ? AND Sector = ?";
         ArrayList<Actuator> result = new ArrayList<>();
         try(Connection conn = DriverManager.getConnection(CONNECTION_URI, USERNAME, PASSWORD);
@@ -152,4 +193,29 @@ public class DAO {
         String strDate = sdfDate.format(now);
         return strDate;
     }
+
+    public boolean deleteActuator(int ID){
+
+        String sqlStatement = "DELETE FROM Actuators WHERE IDActuator = ?";
+        boolean result = false;
+        try(Connection conn = DriverManager.getConnection(CONNECTION_URI, USERNAME, PASSWORD);
+            PreparedStatement ps = conn.prepareStatement(sqlStatement);
+        )
+        {
+            ps.setInt(1, ID);
+            int RowsAffected = ps.executeUpdate();
+
+            if(RowsAffected==0){
+                System.out.println("C'è stato un errore!");
+                return false;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
+
+
 }
