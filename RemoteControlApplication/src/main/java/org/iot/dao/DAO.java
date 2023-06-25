@@ -15,6 +15,44 @@ public class DAO {
     private final String PASSWORD = "1234";
 
 
+    public void writeMeasurement(Measurement m){
+        String sqlStatement = "REPLACE INTO Measurements VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(CONNECTION_URI, USERNAME, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sqlStatement);
+        )
+        {
+            ps.setString(1, m.getIDSensor());
+            ps.setInt(2, m.getSector());
+            ps.setDouble(3, m.getValue());
+            ps.setString(4, m.getTopic());
+            ps.setString(5, m.getTimestamp());
+            int affected_rows = ps.executeUpdate();
+            if(affected_rows == 0)
+                throw new RuntimeException("Something wrong during registration");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void writeActuator(Actuator a) {
+        String sqlStatement = "REPLACE INTO Actuators VALUES (?,?,?,?,?)";
+        try (Connection conn = DriverManager.getConnection(CONNECTION_URI, USERNAME, PASSWORD);
+             PreparedStatement ps = conn.prepareStatement(sqlStatement);
+        )
+        {
+            ps.setString(1, a.getIDActuator());
+            ps.setString(2, a.getIPActuator());
+            ps.setInt(3, a.getSector());
+            ps.setString(4, a.getType());
+            ps.setString(5, a.getStatus());
+            int affected_rows = ps.executeUpdate();
+            if(affected_rows == 0)
+                throw new RuntimeException("Something wrong during registration");
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     // Reads all actuator with the specified type
     public ArrayList<Actuator> readActuator(String type){
