@@ -11,8 +11,8 @@ public class Main {
     public static void main(String[] args) {
         startingTime = LocalDateTime.now();
         MQTTCollector newSub = new MQTTCollector();
-        // Thread t = new Thread(new COAPServer());
-        //t.start();
+         Thread t = new Thread(new COAPServer());
+        t.start();
         newSub.start();
         while(true)
             ;

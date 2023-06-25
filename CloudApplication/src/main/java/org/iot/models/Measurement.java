@@ -1,7 +1,7 @@
 package org.iot.models;
 
 public class Measurement {
-    private String IDsensor;
+    private int IDSensor;
     private int sector;
 
     private double value;
@@ -9,20 +9,20 @@ public class Measurement {
     private String topic;
     private String timestamp;
 
-    public Measurement(String sensorID, String sensorIP, int sector, double value, String topic, String timestamp) {
-        this.IDsensor = sensorID;
+    public Measurement(int sensorID, int sector, double value, String topic, String timestamp) {
+        this.IDSensor = sensorID;
         this.sector = sector;
         this.value = value;
         this.topic = topic;
         this.timestamp = timestamp;
     }
 
-    public String getIDsensor() {
-        return IDsensor;
+    public int getIDSensor() {
+        return IDSensor;
     }
 
-    public void setIDsensor(String IDsensor) {
-        this.IDsensor = IDsensor;
+    public void setIDSensor(int IDSensor) {
+        this.IDSensor = IDSensor;
     }
 
     public int getSector() {
@@ -60,7 +60,7 @@ public class Measurement {
     @Override
     public String toString() {
         return "Measurement{" +
-                "sensorID='" + IDsensor + '\'' +
+                "IDSensor='" + IDSensor + '\'' +
                 ", sector=" + sector +
                 ", value=" + value +
                 ", topic='" + topic + '\'' +

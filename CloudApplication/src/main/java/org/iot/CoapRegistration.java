@@ -9,6 +9,8 @@ import org.iot.models.Actuator;
 import org.iot.dao.Dao;
 
 public class CoapRegistration extends CoapResource{
+    public static int nextActuatorID = 0;
+    private String actuatorIP;
     public CoapRegistration(String name) {
         super(name);
 
@@ -29,10 +31,11 @@ public class CoapRegistration extends CoapResource{
         System.out.println("RICEVUTOs\n" + parameters);
 
         System.out.println("MITTENTE" + exchange.getSourceAddress().toString());
+        actuatorIP = exchange.getSourceAddress().toString();
 
         Response response = new Response(ResponseCode.CONTENT);
         // qua se è an	dato a buon fine tutto
-        response.setPayload("OK\n");
+        response.setPayload("OK");
         exchange.respond(ResponseCode.CREATED);
 
         registerActuator(parameters);
@@ -41,6 +44,8 @@ public class CoapRegistration extends CoapResource{
     public void registerActuator(String parameters){
         Gson gson = new Gson();
         Actuator measure = gson.fromJson(parameters, Actuator.class);
+        measure.setIDActuator(nextActuatorID++);
+        measure.setIPActuator(actuatorIP);
         new Dao().writeActuator(measure);
     }
 

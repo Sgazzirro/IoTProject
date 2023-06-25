@@ -11,12 +11,13 @@ import org.iot.models.Measurement;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MQTTCollector extends Thread implements MqttCallback{
 
     public void connectionLost(Throwable cause) {
         // TODO Auto-generated method stub
-        System.err.println("Connection Lost because of [ " + cause.getStackTrace() + " ]");
+        System.err.println("Connection Lost because of [ " + cause.getCause() + " ]");
         try {
             Main.restartSubscriber();
         } finally{
@@ -30,14 +31,14 @@ public class MQTTCollector extends Thread implements MqttCallback{
         String payload = new String(message.getPayload());
         Gson gson = new Gson();
         Measurement measure = gson.fromJson(payload, Measurement.class);
-        /*
+
         LocalDateTime current = readTime();
-        current.plusSeconds(Long.parseLong(measure.getTimestamp()));
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
-        String strDate = sdfDate.format(current);
+        current = current.plusSeconds(Long.parseLong(measure.getTimestamp()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String strDate = formatter.format(current);
         measure.setTimestamp(strDate);
-        
-         */
+
+
         System.out.println("Received "  + payload);
         System.out.println("Converted in " + measure);
 
