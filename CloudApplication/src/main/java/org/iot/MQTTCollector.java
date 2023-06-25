@@ -6,25 +6,38 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.iot.dao.Dao;
+import org.iot.models.Measurement;
+
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 
 public class MQTTCollector extends Thread implements MqttCallback{
 
     public void connectionLost(Throwable cause) {
         // TODO Auto-generated method stub
-        System.err.println("Connection Lost because of [ " + cause.getMessage() + " ]");
+        System.err.println("Connection Lost because of [ " + cause.getStackTrace() + " ]");
         try {
             Main.restartSubscriber();
         } finally{
-            System.exit(1);
+            //System.exit(1);
         }
     }
 
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         // TODO Auto-generated method stub
+        System.out.println("Message arrived!");
         String payload = new String(message.getPayload());
         Gson gson = new Gson();
         Measurement measure = gson.fromJson(payload, Measurement.class);
-
+        /*
+        LocalDateTime current = readTime();
+        current.plusSeconds(Long.parseLong(measure.getTimestamp()));
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
+        String strDate = sdfDate.format(current);
+        measure.setTimestamp(strDate);
+        
+         */
         System.out.println("Received "  + payload);
         System.out.println("Converted in " + measure);
 
@@ -37,8 +50,12 @@ public class MQTTCollector extends Thread implements MqttCallback{
 
     }
 
+    private LocalDateTime readTime() {
+        return Main.startingTime;
+    }
     public void save(Measurement measure){
-        System.out.println("Saved!");
+
+        new Dao().writeMeasurement(measure);
     }
 /*
     public static void main(String[] args) {
