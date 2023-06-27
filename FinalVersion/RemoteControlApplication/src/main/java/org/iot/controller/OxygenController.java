@@ -8,53 +8,23 @@ import org.iot.dao.DAO;
 
 import java.util.ArrayList;
 
-public class OxygenController extends Thread{
-    private double OXYGEN_MAX_THRESHOLD = 12.5;
-    private double OXYGEN_MIN_THRESHOLD = 7.0;
+public class OxygenController extends Controller{
 
-    public void run(){
-
-        while(true){
-
-            try {
-                ArrayList<CriticalSector> ms = new DAO().readCriticalMeasure("oxygen", OXYGEN_MAX_THRESHOLD, OXYGEN_MIN_THRESHOLD);
-                if (ms == null) {
-                    System.out.println("Maybe SQL Error");
-                    sleep(5000);
-                    continue;
-                }
-                if(ms.isEmpty()){
-                    System.out.println("No critical Measures! :D");
-                    sleep(60000);
-                    continue;
-                }
-                sleep(10000);
-                System.out.println("Critical Sectors Found!");
-                for(CriticalSector cs : ms){
-                    helpSector(cs);
-                }
-
-
-
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-
+    public OxygenController(double min, double max){
+        super(min, max,"oxygen");
     }
 
-    private void helpSector(CriticalSector cs) {
+    public void helpSector(CriticalSector cs) {
         int sector = cs.getSector();
         double value = cs.getValue();
-        System.out.println("Ossigeno nel settore : " + sector + " : " + value + "%");
-        System.out.println("Provo a contattare gli attuatori di quel settore");
+        System.out.println("Sector Oxygen : " + sector + " : " + value + "%");
+        System.out.println("Trying to call actuators...");
 
-        if(value > OXYGEN_MAX_THRESHOLD){
+        if(value > MAX_THRESHOLD){
             reduceOxygen(sector);
         }
 
-        if(value < OXYGEN_MIN_THRESHOLD){
+        if(value < MIN_THRESHOLD){
             increaseOxygen(sector);
         }
     }
@@ -75,7 +45,8 @@ public class OxygenController extends Thread{
         ArrayList<Actuator> actuators_fan = new DAO().readActuatorST("fan", sector);
         for(int i = 0; i < actuators_fan.size(); i++){
             // Logica di aumento ossigeno
-                if(Integer.parseInt(actuators_fan.get(i).getStatus()) == 5){
+                 System.out.println(Integer.parseInt(actuators_fan.get(i).getStatus().substring(0,1)));
+                if(Integer.parseInt(actuators_fan.get(i).getStatus().substring(0,1)) == 5){
                     System.out.println("No more contain measures available!");
                     break;
                 }
@@ -89,8 +60,7 @@ public class OxygenController extends Thread{
         boolean fanOn = false;
         for(int i = 0; i < actuators.size(); i++){
             // Logica di aumento ossigeno
-            System.out.println(Integer.parseInt(actuators.get(i).getStatus()));
-            if(Integer.parseInt(actuators.get(i).getStatus()) > 0){
+            if(Integer.parseInt(actuators.get(i).getStatus().substring(0,1)) > 0){
                 ClientCOAP.changeParam(actuators.get(i), "power", 0);
                 fanOn = true;
             }
@@ -110,15 +80,5 @@ public class OxygenController extends Thread{
 
     }
 
-    public void changeThreshold(double value, int type) {
-        if (type==-1){
-            OXYGEN_MIN_THRESHOLD = value;
-
-        }else if(type==1) {
-            OXYGEN_MAX_THRESHOLD = value;
-        }
-        return;
-
-    }
 
 }

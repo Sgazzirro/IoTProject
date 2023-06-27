@@ -76,6 +76,7 @@ public class MQTTCollector extends Thread implements MqttCallback{
             mqttClient.setCallback(this);
             mqttClient.connect();
             mqttClient.subscribe("oxygen");
+            mqttClient.subscribe("temperature");
             System.out.println("Connected and Subscribed!");
         }
         catch(MqttException me){

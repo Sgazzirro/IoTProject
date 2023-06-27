@@ -1,6 +1,8 @@
 package org.iot;
 
+import org.iot.controller.Controller;
 import org.iot.controller.OxygenController;
+import org.iot.controller.TemperatureController;
 import org.iot.dao.DAO;
 import org.iot.models.Actuator;
 import org.iot.models.Measurement;
@@ -13,18 +15,25 @@ import java.util.ArrayList;
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
+    private static double TEMPERATURE_MIN_THRESHOLD = 18.0;
+    private static double TEMPERATURE_MAX_THRESHOLD = 21.0;
+    private static double OXYGEN_MIN_THRESHOLD = 10.0;
+    private static double OXYGEN_MAX_THRESHOLD = 15.0;
+    private static Controller ctemp = new TemperatureController(TEMPERATURE_MIN_THRESHOLD, TEMPERATURE_MAX_THRESHOLD);
 
-    private static OxygenController Controller = new OxygenController();
+    private static Controller cox= new OxygenController(OXYGEN_MIN_THRESHOLD, OXYGEN_MAX_THRESHOLD);
 
     public static void main(String[] args) {
-        Controller.start();
+        ctemp.start();
+        cox.start();
         Scanner scanner = new Scanner(System.in);
         while(true) {
             System.out.println("OPTIONS MENU:");
             System.out.println("1. Show Actuators List by TYPE and/or SECTOR");
             System.out.println("2. Show Oxigen Measurements of the last 3 minutes");
-            System.out.println("2. Show Temperature Measurements of the last 3 minutes");
-
+            System.out.println("3. Show Temperature Measurements of the last 3 minutes");
+            System.out.println("4. Change Oxygen Threshold ([MIN, MAX], value");
+            System.out.println("5. Change Temperature Threshold ([MIN, MAX], value)");
             int k = scanner.nextInt();
             switch (k) {
                 case 1:
@@ -86,6 +95,24 @@ public class Main {
                         System.out.println(a.toString());
                     }
                     break;
+
+                case 3:
+
+                case 4:
+                    System.out.println("Want to modify MAX or MIN threshold?");
+                    String typeCH = new Scanner(System.in).nextLine();
+                    System.out.println("New Threshold value :");
+                    int newThr = scanner.nextInt();
+                    changeThreshold(typeCH, newThr, cox);
+                    break;
+
+                case 5:
+                    System.out.println("Want to modify MAX or MIN threshold?");
+                    String typeCHt = new Scanner(System.in).nextLine();
+                    System.out.println("New Threshold value :");
+                    int newThrt = scanner.nextInt();
+                    changeThreshold(typeCHt, newThrt, ctemp);
+                    break;
             }
         }
 
@@ -127,12 +154,12 @@ public class Main {
 
     }
 
-    public static void changeThreshold(String type, double new_threshold, OxygenController actuator){
+    public static void changeThreshold(String type, double new_threshold, Controller actuator){
 
         if (type.equals("MIN")){
-            Controller.changeThreshold(new_threshold, -1);
+            actuator.changeThreshold(new_threshold, -1);
         }else if(type.equals("MAX")){
-            Controller.changeThreshold(new_threshold, 1);
+            actuator.changeThreshold(new_threshold, 1);
         }
 
     }
