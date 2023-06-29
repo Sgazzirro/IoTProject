@@ -5,6 +5,7 @@
 #include "contiki-net.h"
 #include "coap-engine.h"
 #include "coap-blocking-api.h"
+#include "dev/leds.h"
 #if PLATFORM_SUPPORTS_BUTTON_HAL
 #include "dev/button-hal.h"
 #else
@@ -22,7 +23,7 @@
 /* FIXME: This server address is hard-coded for Cooja and link-local for unconnected border router. */
 #define SERVER_EP "coap://[fd00::1]"
 
-
+#include "Actuators.h"
 #define TIME_TO_REGISTER 5*CLOCK_SECOND
 static struct etimer registration_timer;
 static bool registered=false;
@@ -30,6 +31,7 @@ static bool disable=false;
 static coap_endpoint_t server_ep;
 static coap_message_t request[1];
 // Define the resource
+
 extern coap_resource_t fan;
 
 /* Declare and auto-start this file's process */
@@ -97,7 +99,9 @@ register_actuator(){
       static char reg_info[100];
 	
 	if(strcmp(TYPE, "fan") == 0 ){
-		sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": \"0\"}", SECTOR, TYPE);
+		sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": \"0, 20\"}", SECTOR, TYPE);
+		actuator_power = 0;
+		actuator_temperature = 20;
 	}else{
 		sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": off }", SECTOR, TYPE);
 	}

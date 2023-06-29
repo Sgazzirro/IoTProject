@@ -2,10 +2,11 @@
 #include <string.h>
 #include <stdio.h>
 #include "coap-engine.h"
+#include "Actuators.h"
 
 #define MAX_FAN_POWER 5
-#define MAX_FAN_TEMP 32
-#define MIN_FAN_TEMP 18
+#define MAX_FAN_TEMP 25
+#define MIN_FAN_TEMP 16
 #include "sys/log.h"
 #define LOG_MODULE "RPL BR"
 #define LOG_LEVEL LOG_LEVEL_INFO
@@ -14,8 +15,8 @@ static void res_post_handler(coap_message_t *request, coap_message_t *response, 
 static void res_put_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 static void res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
-static int actuator_power = 0;
-static int actuator_temperature = 20;
+int actuator_power = 0;
+int actuator_temperature = 20;
 static char tmp[100];
 /*
  * A handler function named [resource name]_handler must be implemented for each RESOURCE.
@@ -68,18 +69,26 @@ bool check = false;
 	  	sscanf(power_char, "%d\n", &power);
 	
 		if (power==1){
+			check = true;
 			printf("Richiesta di alzare la potenza\n");
 			if(++actuator_power > MAX_FAN_POWER){
 				actuator_power=5;
 				printf("Potenza al massimo\n");
 			}
+			else{
+				check = true;
+			}
 
 		}
 		if (power==-1){
+			check = true;
 			printf("Richiesta di ridurre la potenza\n");
 			if(--actuator_power < 0){
 				actuator_power=0;
 				printf("Potenza al minimo\n");
+			}
+			else{
+				check = true;
 			}
 		}
 	   }
@@ -88,16 +97,24 @@ bool check = false;
 		// se c'è un valore
 	  sscanf(temp_char, "%d\n", &temp);
 		if (temp==1){
+			check = true;
 			printf("Richiesta di alzare la temperature\n");
 			if(++actuator_temperature > MAX_FAN_TEMP){
-				actuator_temperature=32;
+				actuator_temperature=MAX_FAN_TEMP;
+			}
+			else{
+				check = true;
 			}
 
 		}
 		if (temp==-1){
+			check = true;
 			printf("Richiesta di alzare la temperatura\n");
 			if(--actuator_temperature < MIN_FAN_TEMP){
-				actuator_temperature = 18;
+				actuator_temperature = MIN_FAN_TEMP;
+			}
+			else{
+				check = true;
 			}
 		}
 	   }
@@ -159,16 +176,16 @@ bool check =false;
 		check = true;
 		// se c'è un valore
 	  	sscanf(temp_char, "%d\n", &temp);
-		actuator_power=power;
+		actuator_temperature=temp;
 			printf("Richiesta di alzare la temperature\n");
 			if(actuator_temperature > MAX_FAN_TEMP){
-				actuator_temperature=32;
+				actuator_temperature=MAX_FAN_TEMP;
 			}
 
 		
 			printf("Richiesta di alzare la temperatura\n");
 			if(actuator_temperature < MIN_FAN_TEMP){
-				actuator_temperature = 18;
+				actuator_temperature = MIN_FAN_TEMP;
 			}
 		
 	   }

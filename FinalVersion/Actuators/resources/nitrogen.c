@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "coap-engine.h"
-
+#include "Actuators.h"
 
 #include "sys/log.h"
 #define LOG_MODULE "RPL BR"
@@ -22,8 +22,8 @@ RESOURCE(nitro,
          res_put_post_handler,
          res_delete_handler);
 
-static bool actuator_status = false;
-char tmp[100];
+bool actuator_status = false;
+static char tmp[100];
 
 static void
 res_get_handler(coap_message_t *request, coap_message_t *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset)

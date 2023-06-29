@@ -7,6 +7,7 @@
 #include "coap-blocking-api.h"
 #if PLATFORM_SUPPORTS_BUTTON_HAL
 #include "dev/button-hal.h"
+#include "dev/leds.h"
 #else
 #include "dev/button-sensor.h"
 #endif
@@ -23,7 +24,7 @@
 /* FIXME: This server address is hard-coded for Cooja and link-local for unconnected border router. */
 #define SERVER_EP "coap://[fd00::1]"
 
-
+#include "Actuators.h"
 #define TIME_TO_REGISTER 5*CLOCK_SECOND
 static struct etimer registration_timer;
 static bool registered=false;
@@ -32,6 +33,7 @@ static coap_endpoint_t server_ep;
 static coap_message_t request[1];
 // Define the resource
 extern coap_resource_t nitro;
+
 
 /* Declare and auto-start this file's process */
 PROCESS(nitro_server, "Nitro Server");
@@ -50,11 +52,15 @@ void client_chunk_handler(coap_message_t *response)
 
 	int len = coap_get_payload(response, &chunk);
         if(response -> code == DELETED_2_02){
+		leds_off(LEDS_GREEN);
+		leds_on(LEDS_RED);
 		registered = false;
 		printf("Successfully unregistered!\n");
 	}
 
 	else if(strncmp((char*)chunk, "OKREG", len) == 0){
+		leds_off(LEDS_RED);
+		leds_on(LEDS_GREEN);
 		registered = true;
 		printf("Successfully registered!\n");
 	}
@@ -92,9 +98,12 @@ register_actuator(){
       static char reg_info[100];
 	
 	if(strcmp(TYPE, "fan") == 0 ){
-		sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": \"0\"}", SECTOR, TYPE);
+		sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": \"0, 20\"}", SECTOR, TYPE);
 	}else{
-		sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": off }", SECTOR, TYPE);
+		if(actuator_status == true) 
+			sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": %s }", SECTOR, TYPE, "on");
+		if(actuator_status == false) 
+			sprintf(reg_info, "{ \"sector\": %d , \"type\": %s, \"status\": %s }", SECTOR, TYPE, "off");
 	}
 
 	printf("%s\n", reg_info);
