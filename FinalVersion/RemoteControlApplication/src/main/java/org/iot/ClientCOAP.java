@@ -12,8 +12,8 @@ public class ClientCOAP{
     public static void  enable(Actuator a){
         CoapClient client = new CoapClient("coap://[" + a.getIPActuator() + "]:5683/nitro");
         CoapResponse response = client.put("enable=on", MediaTypeRegistry.TEXT_PLAIN);
-        System.out.println(response.getResponseText());
-        System.out.println(response.getCode());
+        System.out.println("Response to enabling Nitro: " + response.getResponseText());
+        System.out.println("CODE : " + response.getCode());
         if(response.getCode() == CoAP.ResponseCode.CHANGED){
             a.setStatus("ON");
             new DAO().writeActuator(a);
@@ -24,8 +24,8 @@ public class ClientCOAP{
     public static void  disable(Actuator a){
         CoapClient client = new CoapClient("coap://[" + a.getIPActuator() + "]:5683/nitro");
         CoapResponse response = client.delete();
-        System.out.println(response.getResponseText());
-        System.out.println(response.getCode());
+        System.out.println("Response to disabling Nitro: " + response.getResponseText());
+        System.out.println("CODE : " + response.getCode());
         if(response.getCode() == CoAP.ResponseCode.CHANGED){
             a.setStatus("OFF");
             new DAO().writeActuator(a);
@@ -33,12 +33,12 @@ public class ClientCOAP{
     }
 
     public static void  changeParam(Actuator a, String param, int value){
-        String originalStatus[] = a.getStatus().split(",");
-
+        String originalStatus[] = a.getStatus().split(", ");
+	System.out.println("Trying to change " + param + " in fan actuator to value " + value);
         CoapClient client = new CoapClient("coap://[" + a.getIPActuator() + "]:5683/fan");
         CoapResponse response = client.post(param + "=" + value, MediaTypeRegistry.TEXT_PLAIN);
-        System.out.println(response.getResponseText());
-        System.out.println(response.getCode());
+      
+        System.out.println("CODE [POST REQUEST] : " + response.getCode());
         if(response.getCode() == CoAP.ResponseCode.CHANGED){
             // Cambia il json di a in maniera opportuna
             if(param.equals("temperature")){
@@ -49,18 +49,19 @@ public class ClientCOAP{
                 originalStatus[0] = String.valueOf(value);
             }
 
-            a.setStatus(originalStatus[0] + "," + originalStatus[1]);
+            a.setStatus(originalStatus[0] + ", " + originalStatus[1]);
             new DAO().writeActuator(a);
         }
     }
 
     public static void  incrDecrParam(Actuator a, String param, int value){
-        String originalStatus[] = a.getStatus().split(",");
-
+        String originalStatus[] = a.getStatus().split(", ");
+	System.out.println("Value passed : " + value);
+	System.out.println("Trying to [1 = increment, -1 = decrement] " + param + " in fan actuator");
         CoapClient client = new CoapClient("coap://[" + a.getIPActuator() + "]:5683/fan");
         CoapResponse response = client.put(param + "=" + value, MediaTypeRegistry.TEXT_PLAIN);
-        System.out.println(response.getResponseText());
-        System.out.println(response.getCode());
+        
+        System.out.println("CODE [PUT REQUEST] : " + response.getCode());
         if(response.getCode() == CoAP.ResponseCode.CHANGED){
             // Cambia il json di a in maniera opportuna
             if(param.equals("temperature")){
@@ -72,7 +73,6 @@ public class ClientCOAP{
             }
             else{
                 if(value == 1) {
-                    System.out.println("QQui ci entro");
                     // Cambio il secondo numero della stringa status dentro a
                     originalStatus[0] = String.valueOf(Integer.parseInt(originalStatus[0]) + 1);
                 }
@@ -80,8 +80,7 @@ public class ClientCOAP{
                     originalStatus[0] = String.valueOf(Integer.parseInt(originalStatus[0]) - 1);
             }
 
-            a.setStatus(originalStatus[0] + "," + originalStatus[1]);
-            System.out.println(a);
+            a.setStatus(originalStatus[0] + ", " + originalStatus[1]);
             new DAO().writeActuator(a);
         }
     }

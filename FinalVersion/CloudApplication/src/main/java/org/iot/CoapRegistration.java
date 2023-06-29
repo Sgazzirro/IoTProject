@@ -27,17 +27,16 @@ public class CoapRegistration extends CoapResource{
 
     public void handlePOST(CoapExchange exchange) {
         String parameters = exchange.getRequestText();
-        //exchange.respond(numero);
-        System.out.println("RICEVUTOs\n" + parameters);
+        
+        System.out.println("Received a POST request\n" + parameters);
 
-        System.out.println("MITTENTE" + exchange.getSourceAddress().toString());
+        System.out.println("FROM" + exchange.getSourceAddress().toString());
         actuatorIP = exchange.getSourceAddress().toString();
         actuatorIP = actuatorIP.substring(1);
         Response response = new Response(ResponseCode.CONTENT);
-        // qua se è an	dato a buon fine tutto
         response.setPayload("OKREG");
         exchange.respond(ResponseCode.CREATED);
-
+	System.out.println("Trying to register actuator");
         registerActuator(parameters);
     }
 
@@ -46,12 +45,12 @@ public class CoapRegistration extends CoapResource{
         actuatorIP = exchange.getSourceAddress().toString();
 
         if(new Dao().deleteActuatorIP(actuatorIP.substring(1))){
-            System.out.println("Cancellazione avvenuta con successo");
+            System.out.println("DELETE OK");
         }else{
-            System.out.println("C'è stato un errore!");
+            System.out.println("DELETE ERROR");
         }
         Response response = new Response(ResponseCode.CONTENT);
-        // qua se è an	dato a buon fine tutto
+        
         response.setPayload("OKNREG");
         exchange.respond(ResponseCode.DELETED);
 

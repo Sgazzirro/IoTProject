@@ -28,12 +28,13 @@ public class Dao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+	System.out.println("Correctly DELETED");
         return true;
 }
 
 
             public void writeMeasurement(Measurement m){
-        System.out.println("Sto provando a scrivere");
+       
         String sqlStatement = "INSERT INTO Measurements VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(CONNECTION_URI, USERNAME, PASSWORD);
@@ -54,6 +55,7 @@ public class Dao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+	System.out.println("Success: measurement written");
     }
 
     public void writeActuator(Actuator a) {
@@ -74,5 +76,6 @@ public class Dao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+	System.out.println("Success: Actuator registered");
     }
 }

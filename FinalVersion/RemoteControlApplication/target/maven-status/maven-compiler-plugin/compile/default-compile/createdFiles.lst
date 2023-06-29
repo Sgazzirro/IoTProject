@@ -1,0 +1,9 @@
+org/iot/controller/OxygenController.class
+org/iot/dao/DAO.class
+org/iot/ClientCOAP.class
+org/iot/models/Measurement.class
+org/iot/controller/Controller.class
+org/iot/controller/TemperatureController.class
+org/iot/models/Actuator.class
+org/iot/Main.class
+org/iot/models/CriticalSector.class

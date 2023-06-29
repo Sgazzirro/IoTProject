@@ -39,8 +39,8 @@ public class MQTTCollector extends Thread implements MqttCallback{
         measure.setTimestamp(strDate);
 
 
-        System.out.println("Received "  + payload);
-        System.out.println("Converted in " + measure);
+        System.out.println("Trying to register measure :");
+	System.out.println(measure);
 
         save(measure);
 
@@ -58,15 +58,7 @@ public class MQTTCollector extends Thread implements MqttCallback{
 
         new Dao().writeMeasurement(measure);
     }
-/*
-    public static void main(String[] args) {
-        try {
-            MQTTCollector mc = new MQTTCollector();
-        } catch(MqttException me) {
-            me.printStackTrace();
-        }
-    }
-*/
+
 
     public void run(){
 
@@ -77,7 +69,7 @@ public class MQTTCollector extends Thread implements MqttCallback{
             mqttClient.connect();
             mqttClient.subscribe("oxygen");
             mqttClient.subscribe("temperature");
-            System.out.println("Connected and Subscribed!");
+            System.out.println("MQTT Collector successfully Connected and Subscribed!");
         }
         catch(MqttException me){
             System.out.println("Error " + me.getMessage());

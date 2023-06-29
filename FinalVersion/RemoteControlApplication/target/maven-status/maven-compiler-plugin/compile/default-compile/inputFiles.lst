@@ -1,0 +1,9 @@
+/home/osboxes/IdeaProjects/RemoteControlApplication/src/main/java/org/iot/controller/Controller.java
+/home/osboxes/IdeaProjects/RemoteControlApplication/src/main/java/org/iot/models/CriticalSector.java
+/home/osboxes/IdeaProjects/RemoteControlApplication/src/main/java/org/iot/models/Measurement.java
+/home/osboxes/IdeaProjects/RemoteControlApplication/src/main/java/org/iot/ClientCOAP.java
+/home/osboxes/IdeaProjects/RemoteControlApplication/src/main/java/org/iot/models/Actuator.java
+/home/osboxes/IdeaProjects/RemoteControlApplication/src/main/java/org/iot/dao/DAO.java
+/home/osboxes/IdeaProjects/RemoteControlApplication/src/main/java/org/iot/controller/TemperatureController.java
+/home/osboxes/IdeaProjects/RemoteControlApplication/src/main/java/org/iot/controller/OxygenController.java
+/home/osboxes/IdeaProjects/RemoteControlApplication/src/main/java/org/iot/Main.java

@@ -18,13 +18,15 @@ public class OxygenController extends Controller{
         int sector = cs.getSector();
         double value = cs.getValue();
         System.out.println("Sector Oxygen : " + sector + " : " + value + "%");
-        System.out.println("Trying to call actuators...");
+       
 
         if(value > MAX_THRESHOLD){
+	    System.out.println("Trying to reduce oxygen");
             reduceOxygen(sector);
         }
 
         if(value < MIN_THRESHOLD){
+	    System.out.println("Trying to increase oxygen");
             increaseOxygen(sector);
         }
     }
@@ -47,7 +49,7 @@ public class OxygenController extends Controller{
             // Logica di aumento ossigeno
                  System.out.println(Integer.parseInt(actuators_fan.get(i).getStatus().substring(0,1)));
                 if(Integer.parseInt(actuators_fan.get(i).getStatus().substring(0,1)) == 5){
-                    System.out.println("No more contain measures available!");
+                    System.out.println("ALERT! No more contain measures available!");
                     break;
                 }
                 ClientCOAP.incrDecrParam(actuators_fan.get(i), "power", 1);

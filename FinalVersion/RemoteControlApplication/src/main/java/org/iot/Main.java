@@ -29,11 +29,12 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         while(true) {
             System.out.println("OPTIONS MENU:");
+	    System.out.println("-------------------------------------------------------------------------");
             System.out.println("1. Show Actuators List by TYPE and/or SECTOR");
-            System.out.println("2. Show Oxigen Measurements of the last 3 minutes");
-            System.out.println("3. Show Temperature Measurements of the last 3 minutes");
-            System.out.println("4. Change Oxygen Threshold ([MIN, MAX], value");
-            System.out.println("5. Change Temperature Threshold ([MIN, MAX], value)");
+            System.out.println("2. Show Oxigen/Temperature Measurements of the last 3 minutes");
+            System.out.println("3. Change Oxygen Threshold ([MIN, MAX], value");
+            System.out.println("4. Change Temperature Threshold ([MIN, MAX], value)");
+	    System.out.println("-------------------------------------------------------------------------");
             int k = scanner.nextInt();
             switch (k) {
                 case 1:
@@ -97,8 +98,6 @@ public class Main {
                     break;
 
                 case 3:
-
-                case 4:
                     System.out.println("Want to modify MAX or MIN threshold?");
                     String typeCH = new Scanner(System.in).nextLine();
                     System.out.println("New Threshold value :");
@@ -106,7 +105,7 @@ public class Main {
                     changeThreshold(typeCH, newThr, cox);
                     break;
 
-                case 5:
+                case 4:
                     System.out.println("Want to modify MAX or MIN threshold?");
                     String typeCHt = new Scanner(System.in).nextLine();
                     System.out.println("New Threshold value :");
@@ -138,21 +137,6 @@ public class Main {
 
     }
 
-    public static void showLastMeasurements(int sector){
-
-    }
-
-    public static void deleteActuator(int ID){
-
-        if(new DAO().deleteActuator(ID)){
-            System.out.println("Cancellazione effettuata");
-        }else{
-            System.out.println("Cancellazione fallita");
-        }
-
-
-
-    }
 
     public static void changeThreshold(String type, double new_threshold, Controller actuator){
 
